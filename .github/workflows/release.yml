@@ -1,0 +1,169 @@
+# Release ROOM4DOOM with BuildDeed: test, build for Linux (reproducible, in
+# Podman) and macOS, attest each file, record the build in the license
+# contract licenses.builddeed.testnet (product doom), then publish a GitHub
+# release.
+#
+# Start it with a tag that matches the workspace version in Cargo.toml:
+#   git tag v1.0.0 && git push origin v1.0.0
+#
+# Environment "release" (only for tags v*), secret NEAR_RELEASE_KEY: a NEAR
+# key file for a function-call key of builddeed.testnet that can call only
+# add_build on licenses.builddeed.testnet.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check the tag
+        run: |
+          V=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
+          test "v$V" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME does not match version $V"; exit 1; }
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: /tmp/room4doom-build.tar
+          key: room4doom-build-${{ hashFiles('podman/Containerfile') }}
+      - name: Load or build the build image
+        run: |
+          if [ -f /tmp/room4doom-build.tar ]; then
+            podman load -i /tmp/room4doom-build.tar
+          else
+            podman build -t localhost/room4doom-build:1 -f podman/Containerfile podman
+            podman save -o /tmp/room4doom-build.tar localhost/room4doom-build:1
+          fi
+      - name: Test
+        # vr is for macOS only (Metal). The ammoa tests need a voxel pack
+        # that is not in the repository. One test thread: the gameplay tests
+        # share the global random number generator of Doom.
+        run: scripts/podman-run.sh cargo test --locked --workspace --exclude vr -- --skip ammoa --test-threads=1
+
+  linux:
+    needs: check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: /tmp/room4doom-build.tar
+          key: room4doom-build-${{ hashFiles('podman/Containerfile') }}
+      - name: Load or build the build image
+        run: |
+          if [ -f /tmp/room4doom-build.tar ]; then
+            podman load -i /tmp/room4doom-build.tar
+          else
+            podman build -t localhost/room4doom-build:1 -f podman/Containerfile podman
+            podman save -o /tmp/room4doom-build.tar localhost/room4doom-build:1
+          fi
+      - name: Build in Podman (reproducible)
+        run: scripts/build-linux.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: linux
+          path: dist/room4doom-*
+          if-no-files-found: error
+
+  macos:
+    needs: check
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Rust 1.99.1
+        run: |
+          rustup toolchain install 1.99.1 --profile minimal --target aarch64-apple-darwin
+          rustup default 1.99.1
+      - name: Build
+        run: |
+          cargo build --locked --release -p room4doom --target aarch64-apple-darwin
+          V=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
+          mkdir -p dist
+          cp target/aarch64-apple-darwin/release/room4doom "dist/room4doom-$V-macos-aarch64"
+          codesign --force --sign - "dist/room4doom-$V-macos-aarch64"
+          scripts/fetch-freedoom.sh
+          python3 scripts/zip-release.py "dist/room4doom-$V-macos-aarch64.zip" \
+            "room4doom-$V-macos-aarch64" "dist/room4doom-$V-macos-aarch64:room4doom"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: macos
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    needs: [linux, macos]
+    runs-on: ubuntu-24.04
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Write SHA256SUMS for all files
+        run: |
+          cd dist
+          rm -f SHA256SUMS
+          sha256sum -- * > /tmp/SHA256SUMS
+          mv /tmp/SHA256SUMS SHA256SUMS
+          cat SHA256SUMS
+      - id: attest
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-checksums: dist/SHA256SUMS
+      - name: Install the near CLI 0.30.1
+        run: |
+          U=https://github.com/near/near-cli-rs/releases/download/v0.30.1/near-cli-rs-x86_64-unknown-linux-gnu.tar.gz
+          curl -sSL -o /tmp/near.tgz "$U"
+          echo "996e9f390d1cc446d17ea24e39c48f6ff906507f2d1dba96fc41f596a7e5de14  /tmp/near.tgz" | sha256sum -c -
+          tar -xzf /tmp/near.tgz -C /tmp
+          sudo install -m 755 /tmp/near-cli-rs-x86_64-unknown-linux-gnu/near /usr/local/bin/near
+      - name: Record the build in the license contract
+        env:
+          NEAR_RELEASE_KEY: ${{ secrets.NEAR_RELEASE_KEY }}
+          ATTESTATION_URL: ${{ steps.attest.outputs.attestation-url }}
+          RELEASE_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}
+        run: |
+          umask 077
+          printf '%s' "$NEAR_RELEASE_KEY" > "$RUNNER_TEMP/key.json"
+          python3 -I -c '
+          import json, sys
+          try:
+              k = json.load(open(sys.argv[1]))
+              assert {"account_id", "public_key", "private_key"} <= set(k)
+              assert k["private_key"].startswith("ed25519:")
+          except Exception:
+              sys.exit("NEAR_RELEASE_KEY is not a valid NEAR key file. Set it with: gh secret set NEAR_RELEASE_KEY --env release < key.json")
+          ' "$RUNNER_TEMP/key.json"
+          scripts/record-build.sh "${GITHUB_REF_NAME#v}" "$GITHUB_SHA" "$ATTESTATION_URL" "$RUNNER_TEMP/key.json"
+          rm -f "$RUNNER_TEMP/key.json"
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ATTESTATION_URL: ${{ steps.attest.outputs.attestation-url }}
+        run: |
+          V=${GITHUB_REF_NAME#v}
+          {
+            echo "ROOM4DOOM $V: It runs Doom. The license is an NFT. Commit ${GITHUB_SHA}."
+            echo
+            echo "- The .tar.gz and .zip files carry Freedoom 0.13.0 (freedoom1.wad, BSD license: FREEDOOM-COPYING.txt) and are ready to play. The bare programs need a WAD next to them: freedoom1.wad or doom1.wad."
+            echo "- Unregistered: E1M1. On the title screen, B opens the buy page of a BuildDeed license (https://13rac1.github.io/builddeed/?product=doom) and R registers this computer; registered: every episode and map."
+            echo "- Build provenance: ${ATTESTATION_URL}"
+            echo "- The license contract licenses.builddeed.testnet (product doom) records the SHA-256 of each file. The Linux files are reproducible: \`scripts/build-linux.sh\`."
+            echo "- Linux needs the ALSA library (libasound2). The macOS program is not notarized: \`xattr -d com.apple.quarantine room4doom\`."
+            echo "- GPL-2.0-or-later. Upstream room4doom by Luke Jones is MIT-licensed."
+            echo
+            echo '```'
+            cat dist/SHA256SUMS
+            echo '```'
+          } > notes.md
+          gh release create "$GITHUB_REF_NAME" dist/* --title "ROOM4DOOM $V" --notes-file notes.md

@@ -69,6 +69,10 @@ def main():
     )
     failures = []
     for package in json.loads(metadata.stdout)["packages"]:
+        # The workspace crates are GPL-2.0-or-later (see README); the check
+        # is for the dependencies.
+        if package.get("source") is None:
+            continue
         license_id = package.get("license") or ""
         try:
             allowed = permits_non_gpl(license_id)

@@ -41,7 +41,7 @@ authors = ["Luke Jones <luke@ljones.dev>"]
 version = "1.0.0"
 edition = "2024"
 rust-version = "1.95"
-license = "MIT"
+license = "GPL-2.0-or-later"
 
 [workspace.dependencies]
 test-utils = { path = "./tools/test-utils" }

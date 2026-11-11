@@ -216,6 +216,18 @@ to achieve here.
 
 ![](./misc/compare/widescreen-double-res.png)
 
+## License
+
+This fork is distributed under GPL-2.0-or-later. Upstream room4doom by Luke
+Jones is MIT-licensed; its code is a translation of the GPL-2.0 Doom source.
+
+- [LICENSE](./LICENSE): the GNU General Public License, version 2. You can
+  use version 2 or any later version.
+- [LICENSE-MIT](./LICENSE-MIT): the MIT license and copyright notice of
+  upstream room4doom (Copyright (c) 2020 Luke Jones).
+
+The upstream license note follows.
+
 # License change
 
 This work is licensed as **MIT**.

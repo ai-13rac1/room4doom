@@ -12,7 +12,9 @@ name = "room4doom"
 path = "src/main.rs"
 
 [features]
-default = ["hardware"]
+# The release: the pure-Rust softbuffer window, the CPU renderers and rodio
+# audio. It needs no GPU driver; the "hardware" feature adds the wgpu renderers.
+default = ["software"]
 hardware = ["trig_lut", "display-wgpu", "software25d", "software3d", "wgpu3d", "wgpu3dbsp"]
 software = ["trig_lut", "display-softbuffer", "software25d", "software3d"]
 

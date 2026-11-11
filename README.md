@@ -174,10 +174,11 @@ To build them, use upstream room4doom.
 
 I use and develop on Linux exclusively so although I once did a Windows build I don't maintain it.
 
-- Default build: `cargo build` (uses the `display-pixels` + rodio audio path; pure-Rust)
+- Default build: `cargo build` (the `software` feature: the pure-Rust softbuffer window, the CPU renderers and rodio audio). On Linux it needs the ALSA headers (`libasound2-dev` and `pkg-config` on Debian).
+- GPU renderers (wgpu): `cargo build --no-default-features --features hardware`
 - SDL2 display path (Linux KMS/DRM friendly): `cargo build --no-default-features --features "display-sdl2,trig_lut"` — needs SDL2 dev packages installed.
 
-Audio uses rodio (cpal-backed), so no extra audio dev packages are required for the default build. On Linux, cpal will use ALSA / PulseAudio / PipeWire as the system provides.
+Audio uses rodio (cpal-backed). On Linux, cpal links ALSA, and PulseAudio and PipeWire play through it.
 
 For GUS-style MIDI playback set `sf2_path` in `~/.config/room4doom/user.toml` to a SoundFont (e.g. `gm.sf2`); otherwise music falls back to OPL2/OPL3 FM synthesis with no external dependencies.
 

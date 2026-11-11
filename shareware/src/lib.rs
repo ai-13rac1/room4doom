@@ -24,6 +24,9 @@ pub const PRODUCT_KEY: &str = "doom";
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 /// The message when an unregistered copy tries to start a map that is not free.
 pub const REFUSAL: &str = "Register this computer to play this map.";
+/// The message when an unregistered copy is given a patch WAD. A patch WAD
+/// can put any map in the E1M1 slot, so only a registered copy loads one.
+pub const PWAD_REFUSAL: &str = "Register this computer to load patch WADs.";
 
 /// How often the worker thread asks for the seat while the register page is open.
 const POLL_EVERY: Duration = Duration::from_secs(5);
@@ -125,9 +128,21 @@ impl License {
         self.is_registered()
     }
 
+    /// True when this copy may load patch WADs: only with a seat. This
+    /// waits for the first check, as [`License::allows`] does.
+    pub fn allows_pwads(&mut self) -> bool {
+        self.wait_for_check();
+        self.is_registered()
+    }
+
     /// Shows [`REFUSAL`] on the license screen.
     pub fn refuse(&mut self) {
         REFUSAL.clone_into(&mut self.message);
+    }
+
+    /// Shows [`PWAD_REFUSAL`] on the license screen.
+    pub fn refuse_pwads(&mut self) {
+        PWAD_REFUSAL.clone_into(&mut self.message);
     }
 
     /// R on the title screen: opens the register page and waits for the
@@ -345,6 +360,20 @@ mod tests {
             l.lines(),
             vec!["Registered to alice.testnet", "Updates until 2027-11-10"]
         );
+    }
+
+    #[test]
+    fn unregistered_loads_no_patch_wads() {
+        let mut l = license(vec![fake_rpc::no_seat()]);
+        assert!(!l.allows_pwads(), "no seat: no patch WADs");
+        l.refuse_pwads();
+        assert_eq!(l.lines().last().unwrap(), PWAD_REFUSAL);
+    }
+
+    #[test]
+    fn a_seat_loads_patch_wads() {
+        let mut l = license(vec![fake_rpc::seat("doom:1", "alice.testnet", true)]);
+        assert!(l.allows_pwads(), "a seat: patch WADs load");
     }
 
     #[test]

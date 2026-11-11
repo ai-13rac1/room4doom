@@ -17,6 +17,7 @@ and an owner can resell the license on the BuildDeed market.
 |---|---|---|
 | License box on the title screen | "Unregistered shareware copy" and the computer id | "Registered to <account>, updates until <date>" |
 | Maps | E1M1 | Every episode and map |
+| Patch WADs (`-p`) | Not loaded: "Register this computer to load patch WADs." | Loaded |
 
 ### Try it
 
@@ -52,6 +53,9 @@ and an owner can resell the license on the BuildDeed market.
   unregistered.
 - `Game::map_allowed` in `gamestate` is the gate. A new game, a warp, a
   loaded game and the level exit ask it. Demo playback does not.
+- `prepare_wad` loads patch WADs only on a registered computer: a patch WAD
+  can put any map in the E1M1 slot. The original shareware Doom also
+  refused `-file`.
 - The license covers the builds released in its update period (365 days).
 - The release workflow records the SHA-256 of each release file in the
   contract, with a GitHub build attestation. The Linux files are

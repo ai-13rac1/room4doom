@@ -2636,6 +2636,7 @@ dependencies = [
  "render-backend",
  "render-common",
  "sdl2",
+ "shareware",
  "simplelog",
  "software3d",
  "sound-common",

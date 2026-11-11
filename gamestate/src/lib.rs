@@ -205,7 +205,21 @@ impl Drop for Game {
 ///
 /// Call before `Game::new` so that the WAD is fully prepared for both
 /// game logic and the sound backend.
-pub fn prepare_wad(mut options: GameOptions, mut wad: WadData) -> (GameOptions, WadData) {
+///
+/// The license gate of patch WADs: an unregistered copy does not load them,
+/// because a patch WAD can put any map in the E1M1 slot. The game then
+/// starts without them.
+pub fn prepare_wad(
+    mut options: GameOptions,
+    mut wad: WadData,
+    license: &mut License,
+) -> (GameOptions, WadData) {
+    if !options.pwad.is_empty() && !license.allows_pwads() {
+        warn!("{} Not loaded: {:?}", shareware::PWAD_REFUSAL, options.pwad);
+        license.refuse_pwads();
+        options.pwad.clear();
+    }
+
     if options.map == 0 {
         options.map = 1;
     }
@@ -309,13 +323,15 @@ impl Game {
     ///
     /// Use `prepare_wad()` first to validate options and load PWADs, then
     /// set up the sound backend in `main()`, and pass the resulting channel
-    /// and thread handle here.
+    /// and thread handle here. `license` is the license that `prepare_wad()`
+    /// used.
     pub fn new(
         options: GameOptions,
         wad: WadData,
         snd_tx: SndServerTx,
         snd_thread: JoinHandle<()>,
         initial_config: [i32; ConfigKey::KeyCount as usize],
+        mut license: License,
     ) -> Self {
         let wad_name = wad.wad_name().to_lowercase();
         let game_type = GameType::identify_version(&wad);
@@ -323,7 +339,6 @@ impl Game {
         info!("Init playloop state.");
 
         // The license gate of -e and -m: a refused warp starts at the title.
-        let mut license = License::start();
         let warp_refused = options.warp && !license.allows(options.episode, options.map);
         if warp_refused {
             warn!(

@@ -90,16 +90,17 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let wad_path: PathBuf = options.iwad.clone().into();
     let wad = WadData::new(&wad_path);
-    let (game_options, wad) = prepare_wad(options.clone().into(), wad);
+    let mut license = shareware::License::start();
+    let (game_options, wad) = prepare_wad(options.clone().into(), wad, &mut license);
 
     #[cfg(feature = "display-sdl2")]
     {
         match options.pixels {
             Some(PixelMode::Rgb565) => {
-                run_sdl2::<u16>(game_options, wad, &user_config, options)?;
+                run_sdl2::<u16>(game_options, wad, &user_config, options, license)?;
             }
             Some(PixelMode::Rgb888) | None => {
-                run_sdl2::<u32>(game_options, wad, &user_config, options)?;
+                run_sdl2::<u32>(game_options, wad, &user_config, options, license)?;
             }
         }
     }
@@ -109,7 +110,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         not(feature = "display-sdl2")
     ))]
     {
-        run_winit(game_options, wad, &user_config, options)?;
+        run_winit(game_options, wad, &user_config, options, license)?;
     }
 
     Ok(())
@@ -121,6 +122,7 @@ fn run_sdl2<P>(
     wad: WadData,
     user_config: &UserConfig,
     options: CLIOptions,
+    license: shareware::License,
 ) -> Result<(), Box<dyn Error>>
 where
     P: PixelFmt,
@@ -149,6 +151,7 @@ where
         snd_tx,
         snd_thread,
         user_config.to_config_array(),
+        license,
     );
     game.pic_data.set_crt_gamma(user_config.crt_gamma);
     game.pic_data
@@ -169,6 +172,7 @@ fn run_winit(
     wad: WadData,
     user_config: &UserConfig,
     options: CLIOptions,
+    license: shareware::License,
 ) -> Result<(), Box<dyn Error>> {
     let (snd_tx, snd_thread) = init_sound_no_sdl(&wad, user_config);
     let input_state = input::InputState::new((&user_config.input).into());
@@ -180,6 +184,7 @@ fn run_winit(
         snd_tx,
         snd_thread,
         user_config.to_config_array(),
+        license,
     );
     game.pic_data.set_crt_gamma(user_config.crt_gamma);
     game.pic_data

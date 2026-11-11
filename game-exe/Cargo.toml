@@ -55,6 +55,7 @@ glam.workspace = true
 level.workspace = true
 pic-data.workspace = true
 gamestate.workspace = true
+shareware.workspace = true
 math.workspace = true
 gamestate-traits.workspace = true
 log.workspace = true

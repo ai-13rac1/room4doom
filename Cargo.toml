@@ -29,6 +29,7 @@ members = [
   "game-ui-draw",
   "game-config",
   "pic-data",
+  "shareware",
 ]
 default-members = ["game-exe"]
 # The GPUI tools (bsp-viewer, voxel-viewer, editor, ui-common) are not in this
@@ -54,6 +55,7 @@ pic-data = { path = "./pic-data" }
 gamestate = { path = "./gamestate" }
 gamestate-traits = { path = "./gamestate-traits" }
 doom-ui = { path = "./game-ui" }
+shareware = { path = "./shareware" }
 ui-draw = { path = "./game-ui-draw" }
 
 sound-common = { path = "./sound/common" }

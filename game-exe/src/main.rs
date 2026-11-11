@@ -4,6 +4,7 @@ mod cheats;
 mod cli;
 mod config;
 mod d_main;
+mod license_screen;
 #[cfg(feature = "display-sdl2")]
 mod loop_sdl2;
 #[cfg(all(

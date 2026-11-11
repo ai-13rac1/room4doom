@@ -213,7 +213,7 @@ impl ApplicationHandler for DoomApp {
         let req_h = self.options.height;
 
         let mut attrs = Window::default_attributes()
-            .with_title("ROOM4DOOM")
+            .with_title("ROOM4DOOM: It runs Doom")
             .with_inner_size(winit::dpi::PhysicalSize::new(req_w, req_h));
 
         let wm = self

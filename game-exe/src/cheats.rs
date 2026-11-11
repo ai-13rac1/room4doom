@@ -196,8 +196,9 @@ impl Cheats {
                         (d0, d1, format!("E{d0}M{d1}"))
                     };
                     if game.wad_data.lump_exists(&map_name) {
-                        game.defered_init_new(game.game_skill(), episode, map);
+                        // The license gate replaces this message on a refusal.
                         game.players[game.consoleplayer].message = Some(english::STSTR_CLEV);
+                        game.defered_init_new(game.game_skill(), episode, map);
                     }
                 }
             }

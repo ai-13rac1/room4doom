@@ -1,0 +1,17 @@
+[package]
+name = "shareware"
+description = "The BuildDeed license of the game: computer seats on a NEAR license NFT"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+# The BuildDeed SDK (Apache-2.0), pinned to a commit.
+builddeed = { git = "https://github.com/13rac1/builddeed-sdk", rev = "b137b8740f271c687813a0b039a7d1629f622b8c" }
+
+[dev-dependencies]
+builddeed = { git = "https://github.com/13rac1/builddeed-sdk", rev = "b137b8740f271c687813a0b039a7d1629f622b8c", features = ["test-support"] }
+
+[lints]
+workspace = true

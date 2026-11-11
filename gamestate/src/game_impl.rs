@@ -16,6 +16,9 @@ impl GameTraits for Game {
     /// of impact of changing game-exe vars beyong action here, probably
     /// nothing.
     fn defered_init_new(&mut self, skill: Skill, episode: usize, map: usize) {
+        if !self.map_allowed(episode, map) {
+            return;
+        }
         self.options.skill = skill;
         self.options.episode = episode;
         self.options.map = map;

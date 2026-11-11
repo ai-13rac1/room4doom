@@ -203,6 +203,21 @@ pub(crate) fn input_responder(
         return true;
     }
 
+    // The license keys, on the title screen and in the demos.
+    if game.gamestate == GameState::DemoScreen || game.demo.playback {
+        match sc {
+            KeyCode::R => {
+                game.license.register();
+                return true;
+            }
+            KeyCode::B => {
+                game.license.buy();
+                return true;
+            }
+            _ => {}
+        }
+    }
+
     if machinations.hud_msgs.responder(sc, game) {
         return true;
     }
@@ -240,6 +255,7 @@ pub(crate) fn run_game_tic(
         impl SubsystemTrait,
     >,
 ) -> bool {
+    game.license.poll();
     if game.demo.advance {
         game.do_advance_demo();
     }
@@ -400,6 +416,9 @@ fn draw_ui<P: PixelFmt>(
         draw_text_line(fps, x, 2.0 * sy, sx, sy, palette, ui);
     }
     menu.draw(screen.screen_frame());
+    if game.gamestate == GameState::DemoScreen || game.demo.playback {
+        crate::license_screen::draw(game, screen.screen_frame());
+    }
 }
 
 /// Render the world for one view: once for a monitor, twice for a headset.

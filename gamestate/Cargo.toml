@@ -10,6 +10,7 @@ game-config.workspace = true
 gameplay.workspace = true
 log.workspace = true
 pic-data.workspace = true
+shareware.workspace = true
 gamestate-traits.workspace = true
 math.workspace = true
 sound-common.workspace = true

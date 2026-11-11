@@ -36,6 +36,7 @@ use gamestate_traits::{ConfigKey, GameState, GameTraits as _, SubsystemTrait, Wo
 use log::{debug, error, info, trace, warn};
 use math::m_clear_random;
 use pic_data::PicData;
+use shareware::License;
 use sound_common::{MusTrack, SndServerTx, SoundAction};
 use std::iter::Peekable;
 use std::ptr;
@@ -176,6 +177,9 @@ pub struct Game {
     snd_thread: Option<JoinHandle<()>>,
     /// Per-map metadata overrides from UMAPINFO lump
     pub umapinfo: Option<UMapInfo>,
+    /// The BuildDeed license of this computer: an unregistered copy plays
+    /// only the first map (see `map_allowed`).
+    pub license: License,
 }
 
 impl Drop for Game {
@@ -318,7 +322,17 @@ impl Game {
 
         info!("Init playloop state.");
 
-        let game_action = if options.warp {
+        // The license gate of -e and -m: a refused warp starts at the title.
+        let mut license = License::start();
+        let warp_refused = options.warp && !license.allows(options.episode, options.map);
+        if warp_refused {
+            warn!(
+                "Refused E{}M{}: unregistered copy",
+                options.episode, options.map
+            );
+            license.refuse();
+        }
+        let game_action = if options.warp && !warp_refused {
             GameAction::NewGame
         } else {
             GameAction::None
@@ -333,7 +347,7 @@ impl Game {
         let page_cache = WadPatch::from_lump(lump);
         let pic_data = PicData::init(&wad, &gameplay::SPRNAMES);
 
-        Self {
+        let mut game = Self {
             wad_data: wad,
             wad_name,
             level_start_tic: 0,
@@ -393,7 +407,27 @@ impl Game {
             sound_cmd: snd_tx,
             snd_thread: Some(snd_thread),
             umapinfo,
+            license,
+        };
+        // The game loop starts the title only when no warp was asked for.
+        if warp_refused {
+            game.start_title();
         }
+        game
+    }
+
+    /// The license gate: true when this copy may start the map. An
+    /// unregistered copy plays only the first map. A refusal shows why on the
+    /// HUD and on the license screen. A new game, a warp, a loaded game and
+    /// the level exit all ask here; demo playback does not.
+    pub fn map_allowed(&mut self, episode: usize, map: usize) -> bool {
+        if self.license.allows(episode, map) {
+            return true;
+        }
+        warn!("Refused E{episode}M{map}: unregistered copy");
+        self.license.refuse();
+        self.players[self.consoleplayer].message = Some(shareware::REFUSAL);
+        false
     }
 
     pub fn running(&self) -> bool {
@@ -661,6 +695,11 @@ impl Game {
             "Loading save: map={}, skill={:?}, ep={}, map={}",
             header.map_name, header.skill, header.episode, header.map
         );
+
+        if !self.map_allowed(header.episode, header.map) {
+            self.pending_action = GameAction::None;
+            return;
+        }
 
         // Set up the level from scratch
         self.options.skill = header.skill;
@@ -959,6 +998,11 @@ impl Game {
     ///
     /// Doom function name `G_DoWorldDone`
     fn do_world_done(&mut self) {
+        // An unregistered copy ends at the exit of the first map.
+        if !self.map_allowed(self.options.episode, self.world_info.next + 1) {
+            self.start_title();
+            return;
+        }
         self.options.map = self.world_info.next + 1;
         self.do_load_level();
         self.gamestate = GameState::Level;

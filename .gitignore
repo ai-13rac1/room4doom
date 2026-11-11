@@ -85,3 +85,7 @@ node_modules/
 # Subagent-driven dev scratch
 .superpowers/
 .claude/
+
+# Release build output and the downloaded Freedoom (scripts/build-linux.sh)
+/dist/
+/.freedoom/

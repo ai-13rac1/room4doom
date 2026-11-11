@@ -176,7 +176,6 @@ fn run_winit(
 ) -> Result<(), Box<dyn Error>> {
     let (snd_tx, snd_thread) = init_sound_no_sdl(&wad, user_config);
     let input_state = input::InputState::new((&user_config.input).into());
-    let event_loop = EventLoop::new().expect("failed to create winit event loop");
 
     let mut game = Game::new(
         game_options,
@@ -198,6 +197,9 @@ fn run_winit(
         run_headless(game, input_state, &options);
         return Ok(());
     }
+    // The window needs a display, so create it only after the headless
+    // check: CI runs the demos with no display.
+    let event_loop = EventLoop::new().expect("failed to create winit event loop");
 
     let mut app = DoomApp::new(game, input_state, options, user_config.clone());
     event_loop.run_app(&mut app)?;

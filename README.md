@@ -1,5 +1,75 @@
 # ROOM - Rusted Doom
 
+**It runs Doom. The license is an NFT.**
+
+This fork of [room4doom](https://github.com/flukejones/room4doom) is
+shareware with a [BuildDeed](https://github.com/13rac1/builddeed) license.
+The release carries [Freedoom](https://freedoom.github.io/), so it is ready
+to play.
+
+## Shareware with BuildDeed
+
+A BuildDeed license is an NFT on NEAR (testnet for now) with three computer
+seats. Each sale pays the developer and the contributors in the contract,
+and an owner can resell the license on the BuildDeed market.
+
+| | Unregistered | Registered |
+|---|---|---|
+| License box on the title screen | "Unregistered shareware copy" and the computer id | "Registered to <account>, updates until <date>" |
+| Maps | E1M1 | Every episode and map |
+
+### Try it
+
+1. Download the archive for your system from the
+   [releases](https://github.com/ai-13rac1/room4doom/releases/latest) and
+   extract it. The `.tar.gz` and `.zip` files carry Freedoom 0.13.0
+   (`freedoom1.wad`, BSD license in `FREEDOOM-COPYING.txt`). The bare
+   programs need a WAD next to them: `freedoom1.wad`, or `doom1.wad` (the
+   Doom shareware data, which the releases do not carry).
+2. Start `room4doom`. The title screen shows "Unregistered shareware copy"
+   and this computer's id. Esc opens the menu. A new game in episode 1
+   plays E1M1. Another episode, `-e`/`-m`, `idclev`, a saved game of
+   another map and the exit of E1M1 give "Register this computer to play
+   this map."
+3. Press B on the title screen to buy a license on the
+   [BuildDeed website](https://13rac1.github.io/builddeed/?product=doom)
+   with a NEAR testnet wallet (testnet NEAR is free:
+   [faucet](https://near-faucet.io/)).
+4. Press R on the title screen. The website opens with this computer's id;
+   click "Register this computer". If the page asks for a code, enter the
+   code that the game shows. A few seconds later the title screen shows
+   "Registered to <your account>", and every map is open.
+
+### How it works
+
+- The crate `shareware` uses the
+  [BuildDeed SDK](https://github.com/13rac1/builddeed-sdk) (Apache-2.0). The
+  SDK computes a computer id: the SHA-256 of the operating system's machine
+  id, the contract name and the product key. At each start the game asks
+  the license contract `licenses.builddeed.testnet` (product `doom`) for the
+  seat of that id (a view call to a public NEAR RPC node; no license
+  server). There is no offline mode: with no network the game runs
+  unregistered.
+- `Game::map_allowed` in `gamestate` is the gate. A new game, a warp, a
+  loaded game and the level exit ask it. Demo playback does not.
+- The license covers the builds released in its update period (365 days).
+- The release workflow records the SHA-256 of each release file in the
+  contract, with a GitHub build attestation. The Linux files are
+  reproducible: `scripts/build-linux.sh` (needs Podman) gives the same
+  bytes.
+- The check is in this GPL source code. Anyone may build the game without
+  it; the official build is the one that the contract records.
+
+### Build
+
+```sh
+scripts/podman-run.sh cargo test --workspace --exclude vr -- --skip ammoa --test-threads=1
+scripts/build-linux.sh    # dist/: the Linux program, the .tar.gz, SHA256SUMS
+```
+
+## About upstream room4doom
+
+
 Key features:
 - Software rendering:
   - Classic Doom style (2.5D)

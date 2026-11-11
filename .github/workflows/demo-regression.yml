@@ -22,9 +22,6 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Prepare patched GPUI dependencies
-        run: bash tools/setup-gpui.sh
-
       - name: Build room4doom (release)
         run: cargo build --release -p room4doom
 

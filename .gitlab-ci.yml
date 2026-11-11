@@ -14,7 +14,6 @@ before_script:
     libsdl2-dev libsdl2-gfx-dev libsdl2-mixer-dev libasound2-dev libssl-dev
     libfontconfig1-dev libfreetype6-dev libwayland-dev
     libxkbcommon-dev libxkbcommon-x11-dev libxcb1-dev libx11-xcb-dev
-  - sh tools/setup-gpui.sh
 
 stages:
   - check

@@ -5,10 +5,6 @@ default:
 
 # --- one-time setup ---
 
-# Prepare the pinned, patched GPUI checkout before using Cargo after a clone.
-setup-gpui:
-	bash tools/setup-gpui.sh
-
 # Point git at .githooks/ for pre-commit + pre-push. Run once after clone.
 install-hooks:
 	chmod +x .githooks/pre-commit .githooks/pre-push
@@ -39,18 +35,6 @@ vr *ARGS:
 # Build the VR binary without running it.
 build-vr:
 	cargo build --release --features vr
-
-# Run the BSP viewer. Extra args pass through.
-bsp-viewer *ARGS:
-	cargo run --release -p bsp-viewer -- {{ARGS}}
-
-# Run the voxel viewer. Extra args pass through.
-voxel-viewer *ARGS:
-	cargo run --release -p voxel-viewer -- {{ARGS}}
-
-# Run the map editor. Extra args pass through: just editor --map E1M1
-editor *ARGS:
-	cargo run --release -p editor -- --iwad data/doom1.wad {{ARGS}}
 
 # --- fmt / lint / test ---
 

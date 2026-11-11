@@ -168,10 +168,9 @@ And maybe write a book on all I've learned about writing a Doom engine.
 
 ## Building
 
-Run `just setup-gpui` (or `bash tools/setup-gpui.sh`) once after cloning, before
-using Cargo. This prepares the pinned GPUI dependency patch under the ignored
-`vendor/` directory. The editor, BSP viewer and voxel viewer use GPUI. Cargo also
-resolves these workspace patches when building only the game.
+This fork builds the game only. The editor, the BSP viewer and the voxel viewer
+use GPUI and are not in the Cargo workspace, so the build needs no GPUI checkout.
+To build them, use upstream room4doom.
 
 I use and develop on Linux exclusively so although I once did a Windows build I don't maintain it.
 

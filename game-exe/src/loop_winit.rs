@@ -318,6 +318,8 @@ impl ApplicationHandler for DoomApp {
                 .or_else(|| event_loop.available_monitors().next());
             let refresh_mhz = monitor
                 .and_then(|m| m.video_modes().map(|v| v.refresh_rate_millihertz()).max())
+                // Some displays (Xvfb, for example) give 0: use 60 Hz.
+                .filter(|&mhz| mhz > 0)
                 .unwrap_or(60_000);
             let interval = Duration::from_nanos(NANOS_PER_MILLIHERTZ / refresh_mhz as u64);
             info!(

@@ -267,6 +267,16 @@ pub fn prepare_wad(mut options: GameOptions, mut wad: WadData) -> (GameOptions, 
     );
 
     match game_type.mode {
+        // Freedoom IWADs have a FREEDOOM lump. Freedoom is free software.
+        _ if wad.lump_exists("FREEDOOM") => {
+            println!(
+                r"
+===========================================================================
+              Freedoom: free software (BSD license)
+===========================================================================
+"
+            );
+        }
         GameMode::Shareware => {
             println!(
                 r"

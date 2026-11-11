@@ -72,19 +72,32 @@ use std::str::FromStr;
 
 const LOG_TAG: &str = "UserConfig";
 
-/// Search for an IWAD in the config directory. Checks for doom2.wad,
-/// doom.wad, doom1.wad in that order (case-insensitive).
+/// Search for an IWAD in the directory of the program, then in the config
+/// directory. Checks for doom2.wad, doom.wad, doom1.wad, freedoom2.wad and
+/// freedoom1.wad in that order (case-insensitive). The release carries
+/// freedoom1.wad next to the program.
 fn find_iwad() -> String {
-    let dir = config_dir();
-    let candidates = ["doom2.wad", "doom.wad", "doom1.wad"];
-    if let Ok(entries) = std::fs::read_dir(&dir) {
+    let exe_dir = std::env::current_exe()
+        .ok()
+        .and_then(|p| p.parent().map(Path::to_path_buf));
+    let candidates = [
+        "doom2.wad",
+        "doom.wad",
+        "doom1.wad",
+        "freedoom2.wad",
+        "freedoom1.wad",
+    ];
+    for dir in exe_dir.into_iter().chain([config_dir()]) {
+        let Ok(entries) = std::fs::read_dir(&dir) else {
+            continue;
+        };
         let files: Vec<String> = entries
             .flatten()
             .map(|e| e.file_name().to_string_lossy().to_string())
             .collect();
         for candidate in candidates {
-            if files.iter().any(|f| f.eq_ignore_ascii_case(candidate)) {
-                return dir.join(candidate).to_string_lossy().to_string();
+            if let Some(file) = files.iter().find(|f| f.eq_ignore_ascii_case(candidate)) {
+                return dir.join(file).to_string_lossy().to_string();
             }
         }
     }

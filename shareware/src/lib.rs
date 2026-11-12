@@ -320,9 +320,9 @@ mod tests {
         assert_eq!(p.version, VERSION);
         let c = Client::with_device(p, "a".repeat(64));
         assert!(
-            c.register_url().unwrap().starts_with(
-                "https://13rac1.github.io/builddeed/register.html#product=doom&device="
-            ),
+            c.register_url()
+                .unwrap()
+                .starts_with("https://builddeed.dev/register/#product=doom&device="),
             "the register page of the product"
         );
     }

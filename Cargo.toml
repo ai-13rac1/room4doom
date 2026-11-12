@@ -39,7 +39,7 @@ resolver = "2"
 
 [workspace.package]
 authors = ["Luke Jones <luke@ljones.dev>"]
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 rust-version = "1.95"
 license = "GPL-2.0-or-later"

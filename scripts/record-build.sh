@@ -52,6 +52,9 @@ for line in open(sums):
     artifacts.append({"platform": platform(name), "file": name, "sha256": sha,
                       "attestation_url": attestation or None,
                       "url": f"{release_url}/{name}"})
+# The archive of each platform first: latest_build offers the first file
+# of a platform, and only the archive carries Freedoom next to the program.
+artifacts.sort(key=lambda a: not a["file"].endswith((".tar.gz", ".zip")))
 print(json.dumps({"product": product, "version": version, "commit": commit, "artifacts": artifacts}) if artifacts else "")
 PY
 )

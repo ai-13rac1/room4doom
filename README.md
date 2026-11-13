@@ -33,7 +33,7 @@ and an owner can resell the license on the BuildDeed market.
    another map and the exit of E1M1 give "Register this computer to play
    this map."
 3. Press B on the title screen to buy a license on the
-   [BuildDeed website](https://builddeed.dev/p/doom/)
+   [BuildDeed website](https://testnet.builddeed.dev/p/doom/)
    with a NEAR testnet wallet (testnet NEAR is free:
    [faucet](https://near-faucet.io/)).
 4. Press R on the title screen. The website opens with this computer's id;

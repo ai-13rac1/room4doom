@@ -156,7 +156,7 @@ jobs:
             echo "ROOM4DOOM $V: It runs Doom. The license is an NFT. Commit ${GITHUB_SHA}."
             echo
             echo "- The .tar.gz and .zip files carry Freedoom 0.13.0 (freedoom1.wad, BSD license: FREEDOOM-COPYING.txt) and are ready to play. The bare programs need a WAD next to them: freedoom1.wad or doom1.wad."
-            echo "- Unregistered: E1M1. On the title screen, B opens the buy page of a BuildDeed license (https://builddeed.dev/p/doom/) and R registers this computer; registered: every episode and map."
+            echo "- Unregistered: E1M1. On the title screen, B opens the buy page of a BuildDeed license (https://testnet.builddeed.dev/p/doom/) and R registers this computer; registered: every episode and map."
             echo "- Build provenance: ${ATTESTATION_URL}"
             echo "- The license contract licenses.builddeed.testnet (product doom) records the SHA-256 of each file. The Linux files are reproducible: \`scripts/build-linux.sh\`."
             echo "- Linux needs the ALSA library (libasound2). The macOS program is not notarized: \`xattr -d com.apple.quarantine room4doom\`."

@@ -291,8 +291,8 @@ dependencies = [
 
 [[package]]
 name = "builddeed"
-version = "0.1.0"
-source = "git+https://github.com/13rac1/builddeed-sdk?rev=6e72f7bec2ed7483942d4a7c546e5180830268f4#6e72f7bec2ed7483942d4a7c546e5180830268f4"
+version = "0.1.2"
+source = "git+https://github.com/13rac1/builddeed-sdk?rev=e14b8e97ece968a989f6bd69edc31b109f34b724#e14b8e97ece968a989f6bd69edc31b109f34b724"
 dependencies = [
  "base64 0.22.1",
  "bs58",
@@ -862,7 +862,7 @@ dependencies = [
 
 [[package]]
 name = "doom-ui"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "game-config",
  "gameplay",
@@ -878,7 +878,7 @@ dependencies = [
 
 [[package]]
 name = "doomed-parser"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "geom-kernel",
  "ron",
@@ -929,7 +929,7 @@ dependencies = [
 
 [[package]]
 name = "editor-core"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "doomed-parser",
  "geom-kernel",
@@ -1060,7 +1060,7 @@ dependencies = [
 
 [[package]]
 name = "game-config"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "log",
  "wad",
@@ -1068,7 +1068,7 @@ dependencies = [
 
 [[package]]
 name = "gameplay"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "bitflags 2.13.2",
  "coarse-prof",
@@ -1086,7 +1086,7 @@ dependencies = [
 
 [[package]]
 name = "gamestate"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "game-config",
  "gameplay",
@@ -1101,7 +1101,7 @@ dependencies = [
 
 [[package]]
 name = "gamestate-traits"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "game-config",
  "gameplay",
@@ -1122,7 +1122,7 @@ dependencies = [
 
 [[package]]
 name = "geom-kernel"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "bitflags 2.13.2",
  "ron",
@@ -1385,7 +1385,7 @@ dependencies = [
 
 [[package]]
 name = "input"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "game-config",
  "gamestate-traits",
@@ -1558,7 +1558,7 @@ checksum = "20870f649af7073d53e38067b2a84312175d56ea15217e1b15bc83506ec50afb"
 
 [[package]]
 name = "level"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "bitflags 2.13.2",
  "coarse-prof",
@@ -1664,7 +1664,7 @@ dependencies = [
 
 [[package]]
 name = "math"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "glam",
 ]
@@ -2229,7 +2229,7 @@ dependencies = [
 
 [[package]]
 name = "opl2_emulator"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "wad",
 ]
@@ -2309,7 +2309,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 
 [[package]]
 name = "pic-data"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "log",
  "test-utils",
@@ -2558,7 +2558,7 @@ dependencies = [
 
 [[package]]
 name = "rbsp"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "argh",
  "bitflags 2.13.2",
@@ -2647,7 +2647,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "render-backend"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "coarse-prof",
  "glam",
@@ -2673,7 +2673,7 @@ dependencies = [
 
 [[package]]
 name = "render-common"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "math",
  "pic-data",
@@ -2725,7 +2725,7 @@ dependencies = [
 
 [[package]]
 name = "room4doom"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "argh",
  "coarse-prof",
@@ -2964,7 +2964,7 @@ dependencies = [
 
 [[package]]
 name = "shareware"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "builddeed",
 ]
@@ -3105,7 +3105,7 @@ dependencies = [
 
 [[package]]
 name = "software25d"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "coarse-prof",
  "criterion 0.8.2",
@@ -3123,7 +3123,7 @@ dependencies = [
 
 [[package]]
 name = "software3d"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "coarse-prof",
  "criterion 0.8.2",
@@ -3139,7 +3139,7 @@ dependencies = [
 
 [[package]]
 name = "sound-common"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "glam",
  "log",
@@ -3147,7 +3147,7 @@ dependencies = [
 
 [[package]]
 name = "sound-rodio"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "log",
  "opl2_emulator",
@@ -3244,7 +3244,7 @@ dependencies = [
 
 [[package]]
 name = "test-utils"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "dirs",
  "glam",
@@ -3456,7 +3456,7 @@ checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
 
 [[package]]
 name = "ui-draw"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "log",
  "render-common",
@@ -3547,7 +3547,7 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "vr"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "libloading",
  "log",
@@ -3560,7 +3560,7 @@ dependencies = [
 
 [[package]]
 name = "wad"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "flate2",
  "log",
@@ -3570,7 +3570,7 @@ dependencies = [
 
 [[package]]
 name = "wad-tool"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "argh",
  "serde_json",
@@ -3979,7 +3979,7 @@ dependencies = [
 
 [[package]]
 name = "wgpu3d"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "bytemuck",
  "gameplay",
@@ -3994,7 +3994,7 @@ dependencies = [
 
 [[package]]
 name = "wgpu3dbsp"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "bytemuck",
  "gameplay",

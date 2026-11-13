@@ -8,10 +8,10 @@ license.workspace = true
 
 [dependencies]
 # The BuildDeed SDK (Apache-2.0), pinned to a commit.
-builddeed = { git = "https://github.com/13rac1/builddeed-sdk", rev = "6e72f7bec2ed7483942d4a7c546e5180830268f4" }
+builddeed = { git = "https://github.com/13rac1/builddeed-sdk", rev = "e14b8e97ece968a989f6bd69edc31b109f34b724" }
 
 [dev-dependencies]
-builddeed = { git = "https://github.com/13rac1/builddeed-sdk", rev = "6e72f7bec2ed7483942d4a7c546e5180830268f4", features = ["test-support"] }
+builddeed = { git = "https://github.com/13rac1/builddeed-sdk", rev = "e14b8e97ece968a989f6bd69edc31b109f34b724", features = ["test-support"] }
 
 [lints]
 workspace = true

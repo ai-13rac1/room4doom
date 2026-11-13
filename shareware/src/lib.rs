@@ -322,7 +322,7 @@ mod tests {
         assert!(
             c.register_url()
                 .unwrap()
-                .starts_with("https://builddeed.dev/register/#product=doom&device="),
+                .starts_with("https://testnet.builddeed.dev/register/#product=doom&device="),
             "the register page of the product"
         );
     }
